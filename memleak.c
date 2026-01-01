@@ -1,38 +1,63 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#define PAGE_SIZE 4096
+
+void usage(FILE *);
+int memleak(long pages);
+
 int main(int argc, char **argv) {
-  sleep(10);
+  char *end;
+  long pages;
+  int err;
 
   if (argc != 2) {
-    printf("memory leak size argument is missing\n");
+    fprintf(stderr, "error: number of page to leak not specified\n");
+    usage(stderr);
     return 1;
   }
 
-  char *end = NULL;
-  long to_leak = strtol(argv[1], &end, 10);
+  pages = strtol(argv[1], &end, 10);
   if (end == argv[1]) {
-    printf("failed to parse number of bytes to leak\n");
+    fprintf(stderr, "failed to parse number of bytes to leak\n");
+    usage(stderr);
     return 1;
   }
 
-  for (;;) {
-    size_t bytes = to_leak % 4096 == 0 ? 4096 : to_leak % 4096;
-    void *ptr = malloc(bytes);
-    to_leak -= bytes;
-    if (ptr == NULL) {
-      printf("malloc failed\n");
-      return 1;
-    }
+  // Leak memory.
+  err = memleak(pages);
+  if (err != 0)
+    return err;
 
-    if (to_leak <= 0)
-      break;
-  }
+  printf("memory leaked, sleeping...\n");
 
-  printf("memory leaked\n");
+  // Sleep forever.
   for (;;)
     sleep(1);
+
+  return 0;
+}
+
+void usage(FILE *f) {
+  fprintf(f, "usage: memleak <pages>\n");
+  fprintf(f, "       memleak 1000\n");
+}
+
+int memleak(long pages) {
+  void *ptr;
+
+  for (;;) {
+    ptr = malloc(PAGE_SIZE);
+    pages -= 1;
+    if (ptr == NULL) {
+      return -ENOMEM;
+    }
+
+    if (pages <= 0)
+      break;
+  }
 
   return 0;
 }
