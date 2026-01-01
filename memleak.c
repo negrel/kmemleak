@@ -51,9 +51,8 @@ static inline int memleak(long pages) {
   for (;;) {
     ptr = malloc(PAGE_SIZE);
     pages -= 1;
-    if (ptr == NULL) {
+    if (ptr == NULL)
       return -ENOMEM;
-    }
 
     if (pages <= 0)
       break;

@@ -40,8 +40,10 @@ int main(int argc, char **argv) {
 
   // Leak kernel memory.
   err = kmemleak(&ring, entries);
-  if (err)
+  if (err) {
+    fprintf(stderr, "error: failed to leak memory: %s", strerror(-err));
     return err;
+  }
 
   printf("memory leaked, sleeping...\n");
 
@@ -59,7 +61,7 @@ void usage(FILE *f) {
 
 static inline int kmemleak(struct io_uring *ring, long entries) {
   struct io_uring_sqe *sqe;
-  int err, s;
+  int submitted;
 
   // Submit tasks in loop.
   for (;;) {
@@ -67,15 +69,12 @@ static inline int kmemleak(struct io_uring *ring, long entries) {
 
     // Submission queue is full, submit it.
     if (sqe == NULL || entries <= 0) {
-      s = io_uring_submit(ring);
-      if (err != 0) {
-        return -err;
-      }
+      submitted = io_uring_submit(ring);
 
-      if (s >= entries || entries <= 0)
+      if (submitted >= entries || entries <= 0)
         break;
 
-      entries -= s;
+      entries -= submitted;
 
       continue;
     }
