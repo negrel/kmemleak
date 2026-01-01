@@ -6,7 +6,7 @@
 #define PAGE_SIZE 4096
 
 void usage(FILE *);
-int memleak(long pages);
+static inline int memleak(long pages);
 
 int main(int argc, char **argv) {
   char *end;
@@ -45,7 +45,7 @@ void usage(FILE *f) {
   fprintf(f, "       memleak 1000\n");
 }
 
-int memleak(long pages) {
+static inline int memleak(long pages) {
   void *ptr;
 
   for (;;) {

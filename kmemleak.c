@@ -9,7 +9,7 @@
 #define QUEUE_DEPTH 4096
 
 void usage(FILE *);
-int kmemleak(struct io_uring *ring, long entries);
+static inline int kmemleak(struct io_uring *ring, long entries);
 
 int main(int argc, char **argv) {
   struct io_uring ring;
@@ -40,10 +40,8 @@ int main(int argc, char **argv) {
 
   // Leak kernel memory.
   err = kmemleak(&ring, entries);
-  if (err != 0) {
-    printf("io_uring leak failed: %s\n", strerror(-err));
-    return 1;
-  }
+  if (err)
+    return err;
 
   printf("memory leaked, sleeping...\n");
 
@@ -59,7 +57,7 @@ void usage(FILE *f) {
   fprintf(f, "       kmemleak 1000\n");
 }
 
-int kmemleak(struct io_uring *ring, long entries) {
+static inline int kmemleak(struct io_uring *ring, long entries) {
   struct io_uring_sqe *sqe;
   int err, s;
 
