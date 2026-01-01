@@ -45,7 +45,10 @@ int main(int argc, char **argv) {
     return err;
   }
 
-  printf("memory leaked, sleeping...\n");
+  // Process is killed if you uncomment the printf call.
+  // This is because that function calls trigger a minor page fault which in
+  // turn increase memory allocated by the process and trigger OOM killer.
+  // printf("memory leaked, sleeping...\n");
 
   // Sleep forever.
   for (;;)
