@@ -1,51 +1,11 @@
-# `kmemleak` - 
+# `kmemleak` - Exceeding cgroup memory limits by allocating kernel memory.
 
+Small `io_uring` program, that allocates kernel memory and never frees it.
+This can be used to exceed control group memory limits. See my
+[bugzilla report](https://bugzilla.kernel.org/show_bug.cgi?id=220794).
 
-
-## Why ?
-
-- What was your motivation?
-- Why did you build this project?
-- What problem does it solve?
-- What did you learn?
-- What makes your project stand out?
-
-If your project has a lot of features, consider adding a "Features" section and listing them here.
-
-## Getting started
-
-### Configuration
-
-Here is a table of configuration options:
-
-|  Option name  | Default value |           Description            |
-| :-----------: | :-----------: | :------------------------------: |
-| `OPTION_NAME` |    `VALUE`    |       Option description.        |
-
-### Building the project
-
-```shell
-make build
-```
-
-### Running the tests
-
-```shell
-make tests
-```
-
-## Contributing
-
-If you want to contribute to `kmemleak` to add a feature or improve the code contact
-me at [alexandre@negrel.dev](mailto:alexandre@negrel.dev), open an
-[issue](https://github.com/negrel/kmemleak/issues) or make a
-[pull request](https://github.com/negrel/kmemleak/pulls).
-
-## :stars: Show your support
-
-Please give a :star: if this project helped you!
-
-[![buy me a coffee](https://github.com/negrel/.github/blob/master/.github/images/bmc-button.png?raw=true)](https://www.buymeacoffee.com/negrel)
+[A fix has been accepted](https://lkml.org/lkml/2025/12/30/1017) and will be
+part of Linux 6.19 release.
 
 ## :scroll: License
 
